@@ -65,9 +65,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: checkin files
-        run: |
-          ls -l
-          ls -l ./target
+        run: ls -l
 
       - name: Build and Push Docker Image
         uses: mr-smithers-excellent/docker-build-push@v6
