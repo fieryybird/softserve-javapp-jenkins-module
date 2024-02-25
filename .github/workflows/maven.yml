@@ -38,7 +38,7 @@ jobs:
       - name: Upload test results as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-${{ github.sha }}
           path: test-results.log
 
           # run: java -jar target/simplecrud-0.0.1-SNAPSHOT.jar
