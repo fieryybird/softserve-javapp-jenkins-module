@@ -37,5 +37,12 @@ jobs:
 
     - name: Test Application
       run: mvn test
+
+    - name: List files in /target
+      run: ls -l target/
+
+  #  - name: Test JAR
+  #    run: java -jar path/to/my-application.jar
+
         # mvn -B package --file pom.xml
 
