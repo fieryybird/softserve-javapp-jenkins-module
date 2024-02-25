@@ -56,7 +56,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app-${{ github.sha }}
-          path: ./target/
+          path: ./
 
       - name: Download Dockerfile
         uses: actions/checkout@v4
