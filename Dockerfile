@@ -6,4 +6,4 @@ RUN chmod +777 /app/simplecrud-app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app/simplecrud-app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/simplecrud-app.jar"]
