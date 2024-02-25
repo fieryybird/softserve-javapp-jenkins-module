@@ -36,12 +36,16 @@ jobs:
       run: ./mvnw clean package -DskipTests 
 
     - name: Test Application
-      run: mvn test
+      run: mvn test > test-results.log
 
-    - name: List files in /target
-      run: ls -l target/
+     - name: Upload test results as artifact
+       uses: actions/upload-artifact@v4
+       with: 
+         name: test-results
+         path: test-results.log
 
-    - name: Test JAR
-      run: java -jar target/simplecrud-0.0.1-SNAPSHOT.jar
+
+
+        # run: java -jar target/simplecrud-0.0.1-SNAPSHOT.jar
         # mvn -B package --file pom.xml
 
