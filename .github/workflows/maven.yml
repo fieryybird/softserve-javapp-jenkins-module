@@ -52,16 +52,16 @@ jobs:
     needs: [test-and-build-app]
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: java-app-${{ github.sha }}
-
       - name: Download Dockerfile
         uses: actions/checkout@v4
         with:
           sparse-checkout: Dockerfile
           sparse-checkout-cone-mode: false
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: java-app-${{ github.sha }}
 
       - name: checkin files
         run: ls -l
