@@ -45,7 +45,7 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: fieryybird/demo-project
-          tags: v1, latest
+          tags: v2
           registry: docker.io
           dockerfile: Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
