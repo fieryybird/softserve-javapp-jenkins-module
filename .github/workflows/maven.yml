@@ -4,47 +4,42 @@ on:
   workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get the project files.
+        uses: actions/checkout@v4
 
-    - name: Get the project files.
-      uses: actions/checkout@v4
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven_deps-${{ hashFiles('**/pom.xml') }}
 
-    - name: Cache Maven dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven_deps-${{ hashFiles('**/pom.xml') }}
+      - name: Set up JDK 17.
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
 
+      - name: Add permissions to Maven
+        run: chmod 755 ./mvnw
 
-    - name: Set up JDK 17.
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    
-    - name: Add permissions to Maven
-      run: chmod 755 ./mvnw
+      - name: Build with Maven
+        run: ./mvnw clean package -DskipTests
 
-    - name: Build with Maven
-      run: ./mvnw clean package -DskipTests 
+      - name: Test Application
+        run: mvn test > test-results.log
 
-    - name: Test Application
-      run: mvn test > test-results.log
+      - name: Upload test results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results.log
 
-     - name: Upload test results as artifact
-       uses: actions/upload-artifact@v4
-       with: 
-         name: test-results
-         path: test-results.log
-
-
-
-        # run: java -jar target/simplecrud-0.0.1-SNAPSHOT.jar
-        # mvn -B package --file pom.xml
-
+          # run: java -jar target/simplecrud-0.0.1-SNAPSHOT.jar
+          # mvn -B package --file pom.xml
