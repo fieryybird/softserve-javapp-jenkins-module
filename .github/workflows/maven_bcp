@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test-and-build-app:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,9 @@ jobs:
       - name: Add permissions to Maven
         run: chmod 755 ./mvnw
 
+      - name: Build App with Maven
+        run: ./mvnw clean package -DskipTests
+
       - name: Test Application
         run: mvn test > test-results.log
 
@@ -38,37 +41,11 @@ jobs:
           name: test-results-${{ github.sha }}
           path: test-results.log
 
-      - name: Build App with Maven
-        run: ./mvnw clean package -DskipTests
-
-      - name: Creating .jar artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: java-app-${{ github.sha }}
-          path: target/simplecrud-0.0.1-SNAPSHOT.jar
-
-  docker-container-create-and-push:
-    runs-on: ubuntu-latest
-    needs: [test-and-build-app]
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: java-app-${{ github.sha }}
-          path: ./target
-
-      - name: Download Dockerfile
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: Dockerfile
-          sparse-checkout-cone-mode: false
-
       - name: Build and Push Docker Image
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: fieryybird/demo-project
-          tags: v1
+          tags: v2
           registry: docker.io
           dockerfile: Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
