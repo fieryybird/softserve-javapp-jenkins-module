@@ -88,7 +88,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            docker stop demo-project || true
-            docker rm demo-project || true
+            docker stop webapp || true
+            docker rm webapp || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/demo-project:${{ github.sha }}
             docker run -d --name webapp -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/demo-project:${{ github.sha }}
