@@ -20,7 +20,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven_deps-${{ '**/pom.xml' }}
+        key: ${{ runner.os }}-maven_deps-${{ hashFiles('**/pom.xml') }}
 
 
     - name: Set up JDK 17.
