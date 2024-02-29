@@ -1,0 +1,73 @@
+pipeline {
+    agent {
+        label 'slave-agent1'
+    }
+    triggers {
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timeout(time: 60, unit: 'MINUTES')
+        timestamps()
+    }
+    tools {
+        maven 'maven-3.8.6'
+        jdk 'java-17'
+    }
+    environment {
+        DOCKERHUB_CREDENTIALS = 'docker_token'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/fieryybird/java-actions-task'
+            }
+        }
+        stage('Build Project') {
+            steps {
+                sh 'chmod 755 ./mvnw'
+                sh './mvnw clean package -DskipTests'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Побудова образу
+                    docker.build("fieryybird/demo-project:v1.0.0")
+                }
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    // Авторизація на Docker Hub
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+                        // Пуш образу
+                        docker.image("fieryybird/demo-project:v1.0.0").push()
+                    }
+                }
+            }
+        }
+        stage('Deploy to Remote Server') {
+            steps {
+                        sh '''
+                        ssh admin@192.168.56.103 "\
+                        docker pull fieryybird/demo-project:v1.0.0 && \
+                        docker stop my-app || true && \
+                        docker rm my-app || true && \
+                        docker run -d --name my-app -p 8080:8080 fieryybird/demo-project:v1.0.0"
+                        '''
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline was successful! Cleaning up...'
+            cleanWs()
+        }
+    }
+}
