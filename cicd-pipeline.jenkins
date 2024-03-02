@@ -29,9 +29,16 @@ pipeline {
                 sh './mvnw clean package -DskipTests'
             }
         }
-        stage('Test') {
+        stage('Unit Test') {
             steps {
                 sh 'mvn test'
+            }
+        }
+        stage('Sonar Qube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                sh "mvn verify sonar:sonar"
+                }
             }
         }
         stage('Build Docker Image') {
