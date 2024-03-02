@@ -17,7 +17,7 @@
            <!-- - - - - - Java - - - - - -->
         <java.version>17</java.version>
            <!-- - - - - - SonarQube - - - - - -->
-        <sonar.host.url>http://192.168.56.107:9000</sonar.host.url>
+<!--         <sonar.host.url>http://192.168.56.107:9000</sonar.host.url> -->
         <sonar.projectKey>jenkins-integration-java</sonar.projectKey>
         <sonar.projectName>jenkins-pipeline-java-app</sonar.projectName>
         <!-- - - - - - Sonar - - - - - -->
