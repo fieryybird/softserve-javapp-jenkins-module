@@ -15,7 +15,7 @@ pipeline {
         jdk 'java-17'
     }
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker_token')
+        DOCKERHUB_CREDENTIALS = 'docker_token'
         DOCKER_IMAGE = 'fieryybird/demo-project'
 
     }
@@ -57,7 +57,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', ${env.DOCKERHUB_CREDENTIALS}) {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
                         docker.image("${env.DOCKER_IMAGE}:${env.COMMIT_HASH}").push()
                     }
                 }
