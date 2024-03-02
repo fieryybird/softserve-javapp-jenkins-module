@@ -65,13 +65,13 @@ pipeline {
         }
         stage('Deploy to Remote Server') {
             steps {
-                        sh '''
-                        ssh admin@192.168.56.103 "\
-                        docker pull ${env.DOCKER_IMAGE}:${env.COMMIT_HASH} && \
-                        docker stop my-app || true && \
-                        docker rm my-app || true && \
+                    sh """
+                        ssh admin@192.168.56.103 \\
+                        "docker pull ${env.DOCKER_IMAGE}:${env.COMMIT_HASH} && \\
+                        docker stop my-app || true && \\
+                        docker rm my-app || true && \\
                         docker run -d --name my-app -p 8080:8080 ${env.DOCKER_IMAGE}:${env.COMMIT_HASH}"
-                        '''
+                    """
             }
         }
     }
