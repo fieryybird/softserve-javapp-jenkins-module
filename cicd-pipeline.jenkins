@@ -15,11 +15,16 @@ pipeline {
         jdk 'java-17'
     }
     environment {
-        DOCKERHUB_CREDENTIALS = 'docker_token'
+        DOCKER_IMAGE = 'fieryybird/demo-project'
+
     }
     stages {
-        stage('Checkout') {
+        stage('Prepare and Checkout') {
             steps {
+                script {
+                    def commitHash = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                    env.COMMIT_HASH = "${commitHash}"
+                }
                 git branch: 'main', url: 'https://github.com/fieryybird/java-actions-task'
             }
         }
@@ -44,15 +49,15 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("fieryybird/demo-project:v1.0.0")
+                    docker.build("${env.DOCKER_IMAGE}:${env.COMMIT_HASH}")
                 }
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        docker.image("fieryybird/demo-project:v1.0.0").push()
+                    docker.withRegistry('https://index.docker.io/v1/', credentials('docker_token')) {
+                        docker.image("${env.DOCKER_IMAGE}:${env.COMMIT_HASH}").push()
                     }
                 }
             }
@@ -61,10 +66,10 @@ pipeline {
             steps {
                         sh '''
                         ssh admin@192.168.56.103 "\
-                        docker pull fieryybird/demo-project:v1.0.0 && \
+                        docker pull ${env.DOCKER_IMAGE}:${env.COMMIT_HASH} && \
                         docker stop my-app || true && \
                         docker rm my-app || true && \
-                        docker run -d --name my-app -p 8080:8080 fieryybird/demo-project:v1.0.0"
+                        docker run -d --name my-app -p 8080:8080 ${env.DOCKER_IMAGE}:${env.COMMIT_HASH}"
                         '''
             }
         }
