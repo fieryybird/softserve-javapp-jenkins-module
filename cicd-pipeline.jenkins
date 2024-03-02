@@ -35,7 +35,7 @@ pipeline {
                 sh './mvnw clean package -DskipTests'
             }
         }
-        stage('Unit Test') {
+        stage('Unit Tests') {
             steps {
                 sh 'mvn test'
             }
